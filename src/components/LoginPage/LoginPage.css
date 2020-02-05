@@ -1,0 +1,68 @@
+text {
+    position: absolute;
+    left: 5%;
+    top: 5%;
+    color: white;
+    text-align: center;
+    font-size: 3rem;
+}
+
+
+.form {
+    position: absolute;
+    margin-top: 10rem;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    color: white;
+    height: 30rem;
+    width: 60rem;
+    background-color: #272727;
+    border-radius: .5rem;
+}
+
+
+form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+
+}
+
+@media screen
+and (max-width: 60rem) {
+
+
+    .form {
+        position: absolute;
+        width: 100%;
+        left: 50%;
+        margin-top: 0;
+        transform: translate(-50%, 0);
+        background-color: #272727;
+    }
+
+    .form-style {
+        display: flex;
+        margin: 10% 10% 10% 10%;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #272727;
+    }
+
+}
+
+.nav-tabs .nav-link {
+
+    color: white;
+    background-color: #2C2F33;
+}
+
+
+.input {
+    background-color: #2C2F33;
+    color: white;
+}
+
+

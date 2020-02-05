@@ -1,0 +1,15 @@
+.flex-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #121212;
+}
+
+.flex-element {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+}

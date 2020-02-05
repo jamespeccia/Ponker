@@ -1,0 +1,12 @@
+.modal-dialog {
+    margin: 10rem auto !important;
+    min-width: 60rem;
+}
+
+.modal-body {
+    display: table;
+    overflow-y: auto;
+    overflow-x: auto;
+    min-height: 30rem !important;
+}
+
