@@ -2,10 +2,11 @@ import React from "react"
 //Styling
 import "./styles.css"
 import {Button, Col, Form, FormControl, FormLabel, Image, InputGroup, Modal, ModalDialog, Row} from "react-bootstrap"
-import {updateEmail, updateName, updateUsername} from "../../services/user.service";
 import {NavigationBar} from "../NavigationBar/NavigationBar";
 import picture from "./spade.png"
 import AvatarUpload from "./AvatarUpload/AvatarUpload";
+import {update} from "../../services/user.service";
+import {connect} from "react-redux"
 
 
 class Settings extends React.Component {
@@ -13,32 +14,21 @@ class Settings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            show: true,
+            showDialog: true,
 
             name: props.name,
             username: props.username,
-            email: props.email,
-            bio: props.bio,
+            email: props.username,
+            bio: "test",
 
-            successes: {
-                name: false,
-                username: false,
-                email: false,
-                bio: false
-            },
+            isUsernameEditable: false,
+            isEmailEditable: false,
 
-            errors: {
+            response: {
                 name: "",
                 username: "",
                 email: "",
                 bio: ""
-            },
-
-            editable: {
-                name: false,
-                username: false,
-                email: false,
-                bio: false
             }
         };
 
@@ -49,83 +39,45 @@ class Settings extends React.Component {
 
 
     handleChange(event) {
+        event.preventDefault();
         const {name, value} = event.target;
-        if (this.state.name !== value)
-            this.setState({errors: {...this.state.errors, [name]: ""}});
         this.setState({[name]: value});
     }
 
     handleSubmit(event) {
         event.preventDefault();
-        const {name, username, email, bio} = this.state;
-
-        if (name !== this.props.name) {
-            updateName(name)
-                .then(response => response.json())
-                .then(response => {
-                    if (response.message === "SUCCESS")
-                        this.setState({successes: {...this.state.successes, name: true}});
-                    else
-                        this.setState({errors: {...this.state.errors, name: response.message}});
-                })
-                .catch(() => this.setState({errors: {...this.state.errors, name: "Error!"}}))
-        }
-
-        if (username !== this.props.username) {
-            updateUsername(username)
-                .then(response => response.json())
-                .then(response => {
-                    if (response.message === "SUCCESS")
-                        this.setState({successes: {...this.state.successes, username: true}});
-                    else
-                        this.setState({errors: {...this.state.errors, username: response.message}});
-                })
-                .catch(() => this.setState({errors: {...this.state.errors, username: "Error!"}}))
-        }
-        if (email !== this.props.email) {
-            updateEmail(email)
-                .then(response => response.json())
-                .then(response => {
-                    if (response.message === "SUCCESS")
-                        this.setState({successes: {...this.state.successes, email: true}});
-                    else
-                        this.setState({errors: {...this.state.errors, email: response.message}});
-                })
-                .catch(() => this.setState({errors: {...this.state.errors, email: "Error!"}}))
-        }
-        if (bio !== this.props.bio) {
-            updateEmail(bio)
-                .then(response => response.json())
-                .then(response => {
-                    if (response.message === "SUCCESS")
-                        this.setState({successes: {...this.state.successes, bio: true}});
-                    else
-                        this.setState({errors: {...this.state.errors, bio: response.message}});
-                })
-                .catch(() => this.setState({errors: {...this.state.errors, bio: "Error!"}}))
-        }
-
+        let {name, username, email, bio} = this.state;
+        const payload = {name, username, email, bio};
+        update(payload)
+            .then(response => {
+                this.setState(response);
+            })
+            .catch(error => console.log(error))
     }
 
     handleCancel(event) {
-
+        event.preventDefault();
     }
 
 
     render() {
+        const {showDialog, isNameEditable, isUsernameEditable, isEmailEditable, name, username, email, bio} = this.state;
 
         return (
             <React.Fragment>
+
                 <NavigationBar/>
-                <ModalDialog show={this.state.show}
-                             onHide={() => this.setState({"show": false})}
-                             aria-labelledby="contained-modal-title-vcenter">
+
+                <ModalDialog show={showDialog}
+                             onHide={() => this.setState({"showDialog": false})}
+                             aria-labelledby="contained-modal-title-vcenter" className="">
+
                     <Modal.Header closeButton>
                         <Modal.Title>Settings</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
 
-                        <Form className="p-5 container-fluid">
+                    <Modal.Body>
+                        <Form className="p-xs-0">
                             <Row className="align-text-center mb-5">
                                 <Col xs="1">
                                     <Image src={picture} style={{height: "75px"}}/>
@@ -134,56 +86,60 @@ class Settings extends React.Component {
                                     <AvatarUpload/>
                                 </Col>
                             </Row>
-                            <Form.Row>
+
+                            <Row>
                                 <Col className="pl-0">
                                     <FormLabel column={0}>Name</FormLabel>
                                     <InputGroup>
-                                        <Form.Control readOnly={!this.state.editable.name} name="name"
-                                                      onChange={this.handleChange} isInvalid={this.state.errors.name}
-                                                      defaultValue={this.state.name}/>
-
+                                        <Form.Control readOnly={!isNameEditable} name="name"
+                                                      onChange={this.handleChange} isInvalid={this.state.response.name}
+                                                      defaultValue={name}/>
                                         <InputGroup.Append>
-                                            <Button onClick={() => this.setState({
-                                                editable: {
-                                                    ...this.state.editable,
-                                                    name: !this.state.editable.name
-                                                }
-                                            })} variant="outline-secondary">Edit</Button>
+                                            <Button onClick={() => this.setState({isNameEditable: !isNameEditable})}
+                                                    variant="outline-secondary">Edit</Button>
                                         </InputGroup.Append>
                                         <FormControl.Feedback
-                                            type="invalid">{this.state.errors.name}</FormControl.Feedback>
+                                            type="invalid">{this.state.response.name}</FormControl.Feedback>
                                     </InputGroup>
                                 </Col>
                                 <Col className="pr-0">
-                                    <FormLabel block column={0}>Username</FormLabel>
+                                    <FormLabel column={0}>Username</FormLabel>
                                     <InputGroup>
-                                        <InputGroup.Prepend>
-                                            <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
-                                        </InputGroup.Prepend>
-                                        <Form.Control name="username" onChange={this.handleChange}
-                                                      isInvalid={this.state.errors.username}
-                                                      defaultValue={this.state.username}/>
-                                        <FormControl.Feedback
-                                            type="invalid">{this.state.errors.username}</FormControl.Feedback>
+                                        <Form.Control readOnly={!isUsernameEditable} name="username"
+                                                      onChange={this.handleChange}
+                                                      isInvalid={this.state.response.username}
+                                                      defaultValue={username}/>
                                         <InputGroup.Append>
-                                            <Button variant="outline-secondary">Edit</Button>
+                                            <Button
+                                                onClick={() => this.setState({isUsernameEditable: !isUsernameEditable})}
+                                                variant="outline-secondary">Edit</Button>
                                         </InputGroup.Append>
+                                        <FormControl.Feedback
+                                            type="invalid">{this.state.response.username}</FormControl.Feedback>
                                     </InputGroup>
                                 </Col>
-                            </Form.Row>
+                            </Row>
                             <Form.Row className="my-3">
                                 <FormLabel column={0}>Email</FormLabel>
-                                <Form.Control name="email" onChange={this.handleChange}
-                                              isInvalid={this.state.errors.email} defaultValue={this.state.email}/>
-                                <FormControl.Feedback type="invalid">{this.state.errors.email}</FormControl.Feedback>
+                                <InputGroup>
+                                    <Form.Control readOnly={!isEmailEditable} name="email"
+                                                  onChange={this.handleChange} isInvalid={this.state.response.email}
+                                                  defaultValue={email}/>
+                                    <InputGroup.Append>
+                                        <Button onClick={() => this.setState({isEmailEditable: !isEmailEditable})}
+                                                variant="outline-secondary">Edit</Button>
+                                    </InputGroup.Append>
+                                    <FormControl.Feedback
+                                        type="invalid">{this.state.response.email}</FormControl.Feedback>
+                                </InputGroup>
                             </Form.Row>
 
                             <Form.Row>
                                 <FormLabel column={0}>Bio</FormLabel>
                                 <Form.Control style={{resize: "none"}} as="textarea" rows="2" name="bio"
-                                              onChange={this.handleChange} isInvalid={this.state.errors.bio}
-                                              defaultValue={this.state.bio}/>
-                                <FormControl.Feedback type="invalid">{this.state.errors.bio}</FormControl.Feedback>
+                                              onChange={this.handleChange} isInvalid={this.state.response.bio}
+                                              defaultValue={bio}/>
+                                <FormControl.Feedback type="invalid">{this.state.response.bio}</FormControl.Feedback>
                             </Form.Row>
                         </Form>
                     </Modal.Body>
@@ -202,5 +158,10 @@ class Settings extends React.Component {
     }
 }
 
+function mapStateToProps(state) {
+    const {username, email} = state.authentication.user;
+    return {username, email};
+}
 
-export default Settings
+
+export default connect(mapStateToProps)(Settings)

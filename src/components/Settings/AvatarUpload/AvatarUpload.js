@@ -1,6 +1,5 @@
 import React, {Fragment} from 'react';
 
-import {updateAvatar} from "../../../services/user.service";
 import {Button, Col, Row} from "react-bootstrap";
 
 class AvatarUpload extends React.Component {
@@ -28,9 +27,6 @@ class AvatarUpload extends React.Component {
         const formData = new FormData();
         formData.append('file', this.state.file);
 
-        updateAvatar(formData)
-            .then(response => response)
-            .then(response => console.log(response))
 
     };
 

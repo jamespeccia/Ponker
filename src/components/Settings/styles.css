@@ -1,12 +1,17 @@
 .modal-dialog {
     margin: 10rem auto !important;
-    min-width: 60rem;
+    min-width: 1000px !important;
 }
 
 .modal-body {
-    display: table;
     overflow-y: auto;
     overflow-x: auto;
-    min-height: 30rem !important;
+    min-height: 500px !important;
 }
 
+@media (max-width: 992px) {
+    .modal-dialog {
+        margin: 0 auto !important;
+        min-width: 100% !important;
+    }
+}

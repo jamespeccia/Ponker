@@ -20,7 +20,7 @@ class RegisterPage extends React.Component {
                 username: "",
                 email: "",
                 password: "",
-                confirm_password: ""
+                confirmedPassword: ""
             },
             errors: {
                 username: "",
@@ -36,7 +36,6 @@ class RegisterPage extends React.Component {
     handleChange(event) {
         const {name, value} = event.target;
         const {user} = this.state;
-
 
         let errors = this.state.errors;
 

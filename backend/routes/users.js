@@ -129,13 +129,53 @@ router.put("/avatar", (req, res) => {
     });
 });
 
+router.put("/update", async (req, res) => {
+
+    const authorizedUser = isAuthorized(req.headers.authorization);
+
+    if (!authorizedUser)
+        return res.status(404).json({message: "You are not authorized to preform that action!"});
+
+    const {name, username, email, bio} = req.body;
+    const response = {
+        name: "",
+        username: "",
+        email: "",
+        bio: ""
+    };
+
+    return User.findOne({_id: authorizedUser.id}, async (error, user) => {
+        if (error)
+            return res.status(500).json({message: "error"});
+        if (authorizedUser.name !== name)
+            user.name = name;
+        if (authorizedUser.username !== username)
+            if (await User.findOne({username}))
+                response.username = "Username already taken";
+            else user.username = username;
+        if (authorizedUser.email !== email)
+            if (await User.findOne({email}))
+                response.email = "Email already taken";
+            else user.email = email;
+        if (authorizedUser.bio !== bio)
+            user.bio = bio;
+
+        user.save(err => {
+            if (error) return res.status(500).json({message: error})
+        });
+
+        return res.status(200).json({response});
+    });
+
+});
+
+
 function isAuthorized(authorizationHeader) {
     let decodedToken;
     if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
         const token = authorizationHeader.substring(7);
         try {
             decodedToken = jwt.verify(token, secret.JWT_SECRET);
-            console.log(decodedToken);
             return decodedToken.user;
         } catch (err) {
             return null;
@@ -144,6 +184,5 @@ function isAuthorized(authorizationHeader) {
         return null;
     }
 }
-
 
 module.exports = router;

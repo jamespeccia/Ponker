@@ -56,58 +56,13 @@ function joinGame(pin) {
     return fetch(`${config.apiUrl}/game/join`, requestOptions);
 }
 
-export function updateName(name) {
+export function update(payload) {
+    console.log(payload);
     const requestOptions = {
         method: 'PUT',
         headers,
-        body: JSON.stringify({name})
+        body: JSON.stringify(payload)
     };
-    return fetch(`${config.apiUrl}/users/name`, requestOptions);
-}
-
-export function updateUsername(username) {
-    const requestOptions = {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({username})
-    };
-    return fetch(`${config.apiUrl}/users/username`, requestOptions);
-}
-
-export function updateEmail(email) {
-    const requestOptions = {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({email})
-    };
-    return fetch(`${config.apiUrl}/users/email`, requestOptions);
-}
-
-export function updateBio(bio) {
-    const requestOptions = {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({bio})
-    };
-    return fetch(`${config.apiUrl}/users/bio`, requestOptions);
-}
-
-export function updatePassword(password) {
-    const requestOptions = {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({password})
-    };
-    return fetch(`${config.apiUrl}/users/password`, requestOptions);
-}
-
-export function updateAvatar(avatar) {
-
-    const avatarHeaders = {...authHeader(), 'Content-Type': 'multipart/form-data'};
-    const requestOptions = {
-        method: 'PUT',
-        headers: avatarHeaders,
-        body: avatar
-    };
-    return fetch(`${config.apiUrl}/users/avatar`, requestOptions);
+    return fetch(`${config.apiUrl}/users/update`, requestOptions)
+        .then(response => response.json());
 }
