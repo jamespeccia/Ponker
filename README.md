@@ -1,5 +1,5 @@
 # Ponker
-Online Poker site built using React, Node, and MongoDB
+Online Poker site built using Next.js and AWS
 
 ### Completed
 * Frontend and backend with database
